@@ -1,12 +1,11 @@
 import os
 
 os.environ['CUDA_VISIBLE_DEVICES'] = "0"
-from eval_utils import evaluate_model, prepare_resetbns_dataloader, load_resetbns_models
-from visualpriors import visualpriors
+from eval_utils import  evaluate_model
 from copy import deepcopy
 import pickle as pkl
 
-result_dir = "results/resetbns"
+result_dir = "results/raw_pretrained"
 batch_size = 100
 tasks = [
     'class_object',
@@ -24,12 +23,7 @@ tasks = [
 ]
 domains = ["muleshoe", "ihlen", "mcdade", "noxapater", "uvalda"]
 result = {}
-resetbns_data_domain = [
-    "allensville", "beechwood", "benevolence", "coffeen", "cosmos", "forkland",
-    "hanson", "hiteman"
-]
-resetbns_loader = prepare_resetbns_dataloader(domains=resetbns_data_domain,
-                                          batch_size=batch_size)
+
 os.makedirs(result_dir, exist_ok=True)
 result_file_dir = os.path.join(result_dir, "loss.pkl")
 
@@ -43,13 +37,9 @@ def add_task_dict(task):
     if task not in result:
         result[task] = {}
 
-models = load_resetbns_models(feature_tasks=tasks, loader=resetbns_loader)
 
 for d in domains:
-    res = evaluate_model(models=models,
-                         batch_size=batch_size,
-                         tasks=tasks,
-                         domains=[d])
+    res = evaluate_model(batch_size=batch_size, tasks=tasks, domains=[d])
     for idx, task in enumerate(tasks):
         add_task_dict(task)
         result[task][d] = res[task]

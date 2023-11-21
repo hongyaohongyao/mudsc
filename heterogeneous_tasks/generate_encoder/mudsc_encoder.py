@@ -78,9 +78,6 @@ def add_task_dict(task1, task2):
 
 zipit_dir = "weights/zipit_encoder"
 task_pairs = generate_task_pairs(tasks)
-# task_pairs = [
-#     k for k in task_pairs if k[0] == "reshading" or k[1] == "reshading"
-# ]
 
 for idx, (task1, task2) in enumerate(task_pairs):
     print("Testing task", task1, task2, idx, "/", len(task_pairs))

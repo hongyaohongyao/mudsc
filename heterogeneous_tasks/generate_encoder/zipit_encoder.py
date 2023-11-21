@@ -64,9 +64,6 @@ activate_loader = prepare_resetbns_dataloader(domains=resetbns_data_domain,
                                              batch_size=batch_size)
 
 task_pairs = generate_task_pairs(tasks)
-task_pairs = [
-    k for k in task_pairs if k[0] == "reshading" or k[1] == "reshading"
-]
 for idx, (task1, task2) in enumerate(task_pairs):
     print("Testing task", task1, task2, idx, "/", len(task_pairs))
     save_path = os.path.join(result_dir, f"{task1}__{task2}")

@@ -56,11 +56,11 @@ def add_task_dict(task1, task2):
         result[f"{task2}__{task1}"] = {}
 
 
-repair_data_domain = [
+resetbns_data_domain = [
     "allensville", "beechwood", "benevolence", "coffeen", "cosmos", "forkland",
     "hanson", "hiteman"
 ]
-activate_loader = prepare_resetbns_dataloader(domains=repair_data_domain,
+activate_loader = prepare_resetbns_dataloader(domains=resetbns_data_domain,
                                              batch_size=batch_size)
 
 task_pairs = generate_task_pairs(tasks)

@@ -60,11 +60,11 @@ batch_size = 100
 
 def get_activate_loader():
     if "act" in suffix:
-        repair_data_domain = [
+        resetbns_data_domain = [
             "allensville", "beechwood", "benevolence", "coffeen", "cosmos",
             "forkland", "hanson", "hiteman"
         ]
-        return prepare_resetbns_dataloader(domains=repair_data_domain,
+        return prepare_resetbns_dataloader(domains=resetbns_data_domain,
                                           batch_size=batch_size)
     return None
 

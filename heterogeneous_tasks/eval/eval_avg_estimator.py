@@ -4,8 +4,6 @@ os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 from eval_utils import evaluate_model, generate_avg_estimator, AvgEstimator
 from copy import deepcopy
 import pickle as pkl
-from torch import nn
-import torch
 
 result_dir = "results/avg_estimator"
 batch_size = 100
@@ -25,11 +23,10 @@ tasks = [
 ]
 domains = ["muleshoe", "ihlen", "mcdade", "noxapater", "uvalda"]
 result = {}
-repair_data_domain = [
+resetbns_data_domain = [
     "allensville", "beechwood", "benevolence", "coffeen", "cosmos", "forkland",
     "hanson", "hiteman"
 ]
-# repair_data_domain = ["allensville"]
 
 os.makedirs(result_dir, exist_ok=True)
 result_file_dir = os.path.join(result_dir, "loss.pkl")

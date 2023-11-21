@@ -24,11 +24,11 @@ tasks = [
 ]
 domains = ["muleshoe", "ihlen", "mcdade", "noxapater", "uvalda"]
 result = {}
-repair_data_domain = [
+resetbns_data_domain = [
     "allensville", "beechwood", "benevolence", "coffeen", "cosmos", "forkland",
     "hanson", "hiteman"
 ]
-repair_loader = prepare_resetbns_dataloader(domains=repair_data_domain,
+resetbns_loader = prepare_resetbns_dataloader(domains=resetbns_data_domain,
                                           batch_size=batch_size)
 os.makedirs(result_dir, exist_ok=True)
 result_file_dir = os.path.join(result_dir, "loss.pkl")
@@ -43,7 +43,7 @@ def add_task_dict(task):
     if task not in result:
         result[task] = {}
 
-models = load_resetbns_models(feature_tasks=tasks, loader=repair_loader)
+models = load_resetbns_models(feature_tasks=tasks, loader=resetbns_loader)
 
 for d in domains:
     res = evaluate_model(models=models,

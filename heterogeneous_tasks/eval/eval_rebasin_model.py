@@ -35,11 +35,11 @@ if os.path.exists(result_file_dir):
     print("Loading exist")
     with open(result_file_dir, "rb") as f:
         result = pkl.load(f)
-repair_data_domain = [
+resetbns_data_domain = [
     "allensville", "beechwood", "benevolence", "coffeen", "cosmos", "forkland",
     "hanson", "hiteman"
 ]
-repair_loader = prepare_resetbns_dataloader(domains=repair_data_domain,
+resetbns_loader = prepare_resetbns_dataloader(domains=resetbns_data_domain,
                                           batch_size=batch_size)
 
 
@@ -95,7 +95,7 @@ for idx, (task1, task2) in enumerate(task_pairs):
             m.encoder.load_state_dict(d)
             m.eval().cuda()
 
-        reset_bn_stats(models, repair_loader)
+        reset_bn_stats(models, resetbns_loader)
 
     add_task_dict(task1, task2)
     for d in domains:

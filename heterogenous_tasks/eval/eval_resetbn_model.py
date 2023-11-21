@@ -1,12 +1,12 @@
 import os
 
 os.environ['CUDA_VISIBLE_DEVICES'] = "0"
-from eval_utils import evaluate_model, prepare_repair_dataloader, load_repaired_models
+from eval_utils import evaluate_model, prepare_resetbns_dataloader, load_resetbns_models
 from visualpriors import visualpriors
 from copy import deepcopy
 import pickle as pkl
 
-result_dir = "results/repaired"
+result_dir = "results/resetbn"
 batch_size = 100
 tasks = [
     'class_object',
@@ -28,7 +28,7 @@ repair_data_domain = [
     "allensville", "beechwood", "benevolence", "coffeen", "cosmos", "forkland",
     "hanson", "hiteman"
 ]
-repair_loader = prepare_repair_dataloader(domains=repair_data_domain,
+repair_loader = prepare_resetbns_dataloader(domains=repair_data_domain,
                                           batch_size=batch_size)
 os.makedirs(result_dir, exist_ok=True)
 result_file_dir = os.path.join(result_dir, "loss.pkl")
@@ -43,8 +43,7 @@ def add_task_dict(task):
     if task not in result:
         result[task] = {}
 
-weight_cache = "weights/repaired"
-models = load_repaired_models(feature_tasks=tasks, loader=repair_loader,cache_root=weight_cache)
+models = load_resetbns_models(feature_tasks=tasks, loader=repair_loader)
 
 for d in domains:
     res = evaluate_model(models=models,

@@ -1,7 +1,7 @@
 import os
 
 os.environ['CUDA_VISIBLE_DEVICES'] = "0"
-from eval_utils import  load_repaired_models, prepare_repair_dataloader
+from eval_utils import  load_resetbns_models, prepare_resetbns_dataloader
 from visualpriors import visualpriors
 import zipit.resnet_graph as graph_module
 from zipit.matching_functions import match_tensors_zipit
@@ -14,7 +14,6 @@ import numpy as np
 import random
 
 result_dir = "weights/zipit_encoder"
-cache_root = "weights/repaired"
 batch_size = 100
 tasks = [
     'class_object',
@@ -61,7 +60,7 @@ repair_data_domain = [
     "allensville", "beechwood", "benevolence", "coffeen", "cosmos", "forkland",
     "hanson", "hiteman"
 ]
-activate_loader = prepare_repair_dataloader(domains=repair_data_domain,
+activate_loader = prepare_resetbns_dataloader(domains=repair_data_domain,
                                              batch_size=batch_size)
 
 task_pairs = generate_task_pairs(tasks)
@@ -78,7 +77,7 @@ for idx, (task1, task2) in enumerate(task_pairs):
         continue
     models = [
         deepcopy(m)
-        for m in load_repaired_models([task1, task2], cache_root=cache_root)
+        for m in load_resetbns_models([task1, task2])
     ]
     encoders = [m.encoder for m in models]
     sample_model = deepcopy(encoders[0])

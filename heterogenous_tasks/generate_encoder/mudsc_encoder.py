@@ -16,7 +16,7 @@ print("suffix", args.suffix,"setting gpu",args.gpu)
 
 os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
-from eval_utils import prepare_repair_dataloader, load_repaired_models
+from eval_utils import prepare_resetbns_dataloader, load_resetbns_models
 from copy import deepcopy
 import pickle as pkl
 import mudsc
@@ -64,7 +64,7 @@ def get_activate_loader():
             "allensville", "beechwood", "benevolence", "coffeen", "cosmos",
             "forkland", "hanson", "hiteman"
         ]
-        return prepare_repair_dataloader(domains=repair_data_domain,
+        return prepare_resetbns_dataloader(domains=repair_data_domain,
                                           batch_size=batch_size)
     return None
 
@@ -76,7 +76,6 @@ def add_task_dict(task1, task2):
         result[f"{task2}__{task1}"] = {}
 
 
-weight_cache = "weights/repaired"
 zipit_dir = "weights/zipit_encoder"
 task_pairs = generate_task_pairs(tasks)
 # task_pairs = [
@@ -93,7 +92,7 @@ for idx, (task1, task2) in enumerate(task_pairs):
         continue
     models = [
         deepcopy(m)
-        for m in load_repaired_models([task1, task2], cache_root=weight_cache)
+        for m in load_resetbns_models([task1, task2])
     ]
 
     encoders = [m.encoder for m in models]

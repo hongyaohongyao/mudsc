@@ -13,7 +13,7 @@ parser.add_argument('--gpu', default='0',type=str,
 args = parser.parse_args()
 
 print("suffix", args.suffix,"setting gpu",args.gpu)
-from eval_utils import evaluate_model, reset_bn_stats, prepare_repair_dataloader, load_repaired_models
+from eval_utils import evaluate_model, reset_bn_stats, prepare_resetbns_dataloader
 from visualpriors import visualpriors
 from copy import deepcopy
 import pickle as pkl
@@ -27,7 +27,7 @@ suffix = args.suffix
 prefix = "fusion"
 # prefix = "zipit"
 
-result_dir = f"results_ts/{prefix}{suffix}"
+result_dir = f"results/{prefix}{suffix}"
 batch_size = 100
 tasks = [
     'class_object',
@@ -57,7 +57,7 @@ repair_data_domain = [
     "allensville", "beechwood", "benevolence", "coffeen", "cosmos", "forkland",
     "hanson", "hiteman"
 ]
-repair_loader = prepare_repair_dataloader(domains=repair_data_domain,
+repair_loader = prepare_resetbns_dataloader(domains=repair_data_domain,
                                            batch_size=batch_size)
 
 

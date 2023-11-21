@@ -763,7 +763,7 @@ def get_device(model):
     return next(iter(model.parameters())).device
 
 
-def prepare_repair_dataloader(domains=[], batch_size=64, num_workers=8):
+def prepare_resetbns_dataloader(domains=[], batch_size=64, num_workers=8):
     ds = TaskonomyDataset(domains=domains,
                           root=taskonomy_data_dir,
                           use_mask=False)
@@ -807,9 +807,9 @@ def reset_bn_stats(models, loader, reset=True):
     return models
 
 
-def load_repaired_models(feature_tasks=["normal"],
+def load_resetbns_models(feature_tasks=["normal"],
                          loader=None,
-                         cache_root="repaired"):
+                         cache_root="weights/resetbns"):
     VisualPriorPredictedLabel._load_unloaded_nets(feature_tasks)
     nets = [
         VisualPriorPredictedLabel.feature_task_to_net[t] for t in feature_tasks
@@ -823,7 +823,7 @@ def load_repaired_models(feature_tasks=["normal"],
         if os.path.exists(state_dict_path):
             nets[i].load_state_dict(
                 torch.load(state_dict_path, map_location="cpu"))
-            print(f"Loaded repaired model({t}) from {state_dict_path}")
+            print(f"Loaded resetbns model({t}) from {state_dict_path}")
         else:
             unload_models[t] = nets[i]
     if len(unload_models) > 0:
@@ -835,7 +835,7 @@ def load_repaired_models(feature_tasks=["normal"],
             os.makedirs(task_path, exist_ok=True)
             state_dict_path = os.path.join(task_path, "ckpt.pth")
             torch.save(m.cpu().state_dict(), state_dict_path)
-            print(f"Saved repaired model({t}) to {state_dict_path}")
+            print(f"Saved resetbns model({t}) to {state_dict_path}")
     return nets
 
 

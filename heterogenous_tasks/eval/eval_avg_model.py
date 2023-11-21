@@ -1,4 +1,4 @@
-from eval_utils import evaluate_model, reset_bn_stats, prepare_repair_dataloader
+from eval_utils import evaluate_model, reset_bn_stats, prepare_resetbns_dataloader
 from visualpriors import visualpriors
 from copy import deepcopy
 import pickle as pkl
@@ -35,7 +35,7 @@ repair_data_domain = [
     "allensville", "beechwood", "benevolence", "coffeen", "cosmos", "forkland",
     "hanson", "hiteman"
 ]
-repair_loader = prepare_repair_dataloader(domains=repair_data_domain,
+repair_loader = prepare_resetbns_dataloader(domains=repair_data_domain,
                                           batch_size=batch_size)
 
 

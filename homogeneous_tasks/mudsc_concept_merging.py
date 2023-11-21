@@ -34,15 +34,7 @@ import mudsc as weight_fusion
 import torch.backends.cudnn as cudnn
 import pickle as pkl
 
-# suffix = "_act" # zipit
-# suffix = "_act_useperm" # 基于激活对齐
-# suffix = "_avg" # 平均
-# suffix = "_useperm" # 基于权重+对齐
-# suffix = "_act_iws_fs_useperm" # 我们的方法+对齐
-# suffix = "_act_iws_fs" # 我们的方法+zipit
-# suffix = "" # 基于权重+zipit
 
-# suffix = "_act_iws_fs_train"
 suffix = args.suffix
 
 

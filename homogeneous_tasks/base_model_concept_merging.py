@@ -1,7 +1,7 @@
 import os
 import argparse
 
-parser = argparse.ArgumentParser('Evaluation basic model')
+parser = argparse.ArgumentParser('Evaluation basic performance')
 
 parser.add_argument('--config-name', type=str,
                         help='config name')

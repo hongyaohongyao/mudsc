@@ -1100,6 +1100,9 @@ def find_pairs(str_splits):
 
 
 def find_runable_pairs(model_dir, model_name, skip_pair_idxs=[]):
+
+    if "imnet" in model_dir:
+        return [(a,b) for a in range(5) for b in range(a+1,5)]
     run_pairs = []
     valid_pairs = [
         pair for pair in find_pairs(os.listdir(model_dir))

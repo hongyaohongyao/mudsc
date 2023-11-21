@@ -110,6 +110,13 @@ def run_node_experiment(node_config, experiment_config, pairs, csv_file):
                                                  fc_name="fc",
                                                  pool_name="global_pool",
                                                  res_start_layer=0)
+        elif "resnet50dino" in config_name:
+            vit_perm = weight_fusion.get_resnet_perm(
+                block=3,
+                num_blocks=[3, 4, 6, 3],
+                shortcut_name="downsample",
+                fc_name="fc",
+                res_start_layer=0)
         elif "resnet50gn" in config_name:
             vit_perm = weight_fusion.get_resnet_perm_group(
                 block=3,
@@ -175,8 +182,8 @@ if __name__ == "__main__":
 
     experiment_configs = []
     if "fs" in suffix:
-        # for fr in [0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01]:
-        # for fr in [0.99, 0.98, 0.97, 0.96, 0.95, 0.94, 0.93, 0.92, 0.91]:
+        # for fr in [0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01]: # search more balanced factor
+        # for fr in [0.99, 0.98, 0.97, 0.96, 0.95, 0.94, 0.93, 0.92, 0.91]: # search more balanced factor
         for fr in [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]:
 
             experiment_configs.append({

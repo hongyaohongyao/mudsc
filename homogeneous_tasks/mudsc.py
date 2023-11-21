@@ -1062,8 +1062,8 @@ class WeightFusion(object):
             if col_idx < row_idx:
                 row_idx, col_idx = col_idx, row_idx
 
-            row_origin = original_model[row_idx]  # row属于第几个模型
-            col_origin = original_model[col_idx]  # col属于第几个模型
+            row_origin = original_model[row_idx]  # model the row belongt to
+            col_origin = original_model[col_idx]  # model the col belongt to
 
             permutation_matrix[:, row_idx] += permutation_matrix[:, col_idx]
             permutation_matrix = remove_col(permutation_matrix, col_idx)
@@ -1072,15 +1072,15 @@ class WeightFusion(object):
                                                                     col_idx])
 
             if a <= 0:
-                # 匹配过行列不在发生匹配
+                # Matched rows and columns are no longer matched.
                 sims[row_origin * Om:(row_origin + 1) * Om,
                      row_idx] = -torch.inf
                 sims[col_origin * Om:(col_origin + 1) * Om,
                      row_idx] = -torch.inf
             else:
-                sims[:, row_idx] *= a  # 匹配过的元素减少被匹配的可能
+                sims[:, row_idx] *= a  # Matched elements reduce the possibility of being matched.
             sims = remove_col(
-                sims, col_idx)  # 表示col_idx 和 row_idx被合并到一起，此时row_idx就代表col_idx
+                sims, col_idx)  # It means that col_idx and row_idx are merged, and row_idx stands for col_idx.
 
             sims[row_idx, :] = torch.minimum(sims[row_idx, :],
                                              sims[col_idx, :])
@@ -1102,7 +1102,7 @@ class WeightFusion(object):
                 budget[origin] -= 1
 
                 if budget[origin] <= 0:
-                    # kill origin 原模型的预算没了就不在匹配
+                    # If the budget of the original model of kill origin is gone, it will not be matched.
                     selector = original_model == origin
                     sims[selector[:, None] & selector[None, :]] = -torch.inf
         unmerge = permutation_matrix
@@ -1238,8 +1238,8 @@ class WeightFusion(object):
             if col_idx < row_idx:
                 row_idx, col_idx = col_idx, row_idx
 
-            row_origin = original_model[row_idx]  # row属于第几个模型
-            col_origin = original_model[col_idx]  # col属于第几个模型
+            row_origin = original_model[row_idx]  # model the row belongt to
+            col_origin = original_model[col_idx]  # model the col belongt to
 
             permutation_matrix[:, row_idx] += permutation_matrix[:, col_idx]
             permutation_matrix = remove_col(permutation_matrix,
@@ -1250,14 +1250,14 @@ class WeightFusion(object):
                                                                     col_idx])
 
             if a <= 0:
-                # 匹配过行列不在发生匹配
+                # Matched rows and columns are no longer matched.
                 sims[row_origin * Om:(row_origin + 1) * Om,
                      row_idx] = -torch.inf
                 sims[col_origin * Om:(col_origin + 1) * Om,
                      row_idx] = -torch.inf
             else:
-                sims[:, row_idx] *= a  # 匹配过的元素减少被匹配的可能
-            # 表示col_idx 和 row_idx被合并到一起，此时row_idx就代表col_idx
+                sims[:, row_idx] *= a  # Matched elements reduce the possibility of being matched.
+            # It means that col_idx and row_idx are merged, and row_idx stands for col_idx.
             sims = remove_col(sims, col_idx, temp=temp_)
             current_group_mask = remove_col(current_group_mask,
                                             col_idx,
@@ -1286,7 +1286,7 @@ class WeightFusion(object):
                 budget[origin] -= 1
 
                 if budget[origin] <= 0:
-                    # kill origin 原模型的预算没了就不在匹配
+                    # If the budget of the original model of kill origin is gone, it will not be matched.
                     selector = original_model == origin
                     sims[selector[:, None] & selector[None, :]] = -torch.inf
                     # print("model budget out", origin)
@@ -1300,11 +1300,11 @@ class WeightFusion(object):
                 group_budget[origin] -= 1
 
                 if group_budget[origin] <= 0:
-                    # kill origin 原模型的预算没了就不在匹配
+                    # If the budget of the original model of kill origin is gone, it will not be matched.
                     selector = original_group == origin
                     sims[selector[:, None] & selector[None, :]] = -torch.inf
                     # print("group budget out", origin)
-            # 当前分组合并一次
+            # The current grouping is merged once.
             group_to_remove -= 1
         permuted_permutation_matrix = []
         for v in merged_group:
@@ -1396,7 +1396,7 @@ class WeightFusion(object):
                         None, :] | current_group_mask[:, None]
                     sims[current_group_mask] = -torch.inf
                 id_group_mask = original_group[:, None] == original_group[
-                    None, :]  # 排除同组合并
+                    None, :]  # Exclude the same group combination
 
                 id_group_offset = torch.zeros_like(sims,
                                                    dtype=sims.dtype,
@@ -1434,8 +1434,8 @@ class WeightFusion(object):
             if col_idx < row_idx:
                 row_idx, col_idx = col_idx, row_idx
 
-            row_origin = original_model[row_idx]  # row属于第几个模型
-            col_origin = original_model[col_idx]  # col属于第几个模型
+            row_origin = original_model[row_idx]  # model the row belongt to
+            col_origin = original_model[col_idx]  # model the col belongt to
 
             permutation_matrix[:, row_idx] += permutation_matrix[:, col_idx]
             permutation_matrix = remove_col(permutation_matrix,
@@ -1446,14 +1446,14 @@ class WeightFusion(object):
                                                                     col_idx])
 
             if a <= 0:
-                # 匹配过行列不在发生匹配
+                # Matched rows and columns are no longer matched.
                 sims[row_origin * Om:(row_origin + 1) * Om,
                      row_idx] = -torch.inf
                 sims[col_origin * Om:(col_origin + 1) * Om,
                      row_idx] = -torch.inf
             else:
-                sims[:, row_idx] *= a  # 匹配过的元素减少被匹配的可能
-            # 表示col_idx 和 row_idx被合并到一起，此时row_idx就代表col_idx
+                sims[:, row_idx] *= a  # Matched elements reduce the possibility of being matched.
+            # It means that col_idx and row_idx are merged, and row_idx stands for col_idx.
             sims = remove_col(sims, col_idx, temp=temp_)
             current_group_mask = remove_col(current_group_mask,
                                             col_idx,
@@ -1482,7 +1482,7 @@ class WeightFusion(object):
                 budget[origin] -= 1
 
                 if budget[origin] <= 0:
-                    # kill origin 原模型的预算没了就不在匹配
+                    # If the budget of the original model of kill origin is gone, it will not be matched.
                     selector = original_model == origin
                     sims[selector[:, None] & selector[None, :]] = -torch.inf
                     # print("model budget out", origin)
@@ -1496,11 +1496,11 @@ class WeightFusion(object):
                 group_budget[origin] -= 1
 
                 if group_budget[origin] <= 0:
-                    # kill origin 原模型的预算没了就不在匹配
+                    # If the budget of the original model of kill origin is gone, it will not be matched.
                     selector = original_group == origin
                     sims[selector[:, None] & selector[None, :]] = -torch.inf
                     # print("group budget out", origin)
-            # 当前分组合并一次
+            # The current grouping is merged once.
             group_to_remove -= 1
         permuted_permutation_matrix = []
         for v in merged_group:
@@ -1612,14 +1612,14 @@ class WeightFusion(object):
                                                                     col_idx])
 
             if a <= 0:
-                # 匹配过行列不在发生匹配
+                # Matched rows and columns are no longer matched.
                 sims[row_origin * Om:(row_origin + 1) * Om,
                      row_idx] = -torch.inf
                 sims[col_origin * Om:(col_origin + 1) * Om,
                      row_idx] = -torch.inf
             else:
-                sims[:, row_idx] *= a  # 匹配过的元素减少被匹配的可能
-            # 表示col_idx 和 row_idx被合并到一起，此时row_idx就代表col_idx
+                sims[:, row_idx] *= a  # Matched elements reduce the possibility of being matched.
+            # It means that col_idx and row_idx are merged, and row_idx stands for col_idx.
             sims = remove_col(sims, col_idx, temp=temp_)
 
             sims[row_idx, :] = torch.minimum(sims[row_idx, :],
@@ -1643,7 +1643,7 @@ class WeightFusion(object):
                 group_budget[origin] -= 1
 
                 if group_budget[origin] == 0:
-                    # kill origin 原模型的预算没了就不在匹配
+                    # If the budget of the original model of kill origin is gone, it will not be matched.
                     selector = original_group == origin
                     sims[selector[:, None] & selector[None, :]] = -torch.inf
                     # print("group budget out", origin)

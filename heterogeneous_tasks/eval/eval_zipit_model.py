@@ -14,7 +14,7 @@ batch_size = 100
 tasks = [
     'class_object', 'segment_semantic', 'depth_zbuffer', 'depth_euclidean',
     'edge_occlusion', 'edge_texture', 'keypoints2d', 'keypoints3d',
-    'curvature', 'reshading', 'normal', 'autoencoding', "denoising"
+     'reshading', 'normal', 'autoencoding', "denoising"
 ]
 domains = ["ihlen", "mcdade", "muleshoe", "noxapater", "uvalda"]
 result = {}

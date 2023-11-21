@@ -1,10 +1,9 @@
 import os
 
-os.environ['CUDA_VISIBLE_DEVICES'] = "1"
+os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 from eval_utils import evaluate_model, reset_bn_stats, prepare_resetbns_dataloader
 from visualpriors import visualpriors
 from copy import deepcopy
-import pickle as pkl
 import rebasin
 import torch
 

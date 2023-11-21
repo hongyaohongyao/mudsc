@@ -16,8 +16,7 @@ import scipy
 from visualpriors.visualpriors.transforms import VisualPriorPredictedLabel
 from copy import deepcopy
 
-
-taskonomy_data_dir = "/nfs3/xzq/data/taskonomy_dest2"
+taskonomy_data_dir = "./taskonomy_data"
 
 def np_softmax(logits):
     maxs = np.amax(logits, axis=-1)

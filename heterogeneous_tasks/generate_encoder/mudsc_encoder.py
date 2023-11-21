@@ -22,9 +22,7 @@ import pickle as pkl
 import mudsc
 import torch
 
-# suffix = "_act_iws_fs_useperm"
 suffix = args.suffix
-# suffix = "_act_useperm"
 
 result_dir = f"weights/fusion_encoder{suffix}"
 tasks = [

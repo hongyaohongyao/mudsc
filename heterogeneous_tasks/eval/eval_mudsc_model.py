@@ -18,11 +18,7 @@ from visualpriors import visualpriors
 from copy import deepcopy
 import pickle as pkl
 import torch
-import  mudsc
 
-# suffix = "_act_useperm"
-# suffix = "_act_iws_fs_useperm"
-# suffix = "_act_iws_fs_fr04"
 suffix = args.suffix
 prefix = "fusion"
 # prefix = "zipit"
@@ -80,7 +76,7 @@ task_pairs = generate_task_pairs(tasks)
 # task_pairs = [
 #     k for k in task_pairs if k[0] == "reshading" or k[1] == "reshading"
 # ]
-encoder_weight_root = f"weights_ts/{prefix}_encoder{suffix}"
+encoder_weight_root = f"weights/{prefix}_encoder{suffix}"
 print("Loading model from", encoder_weight_root)
 for idx, (task1, task2) in enumerate(task_pairs):
     print(f"{prefix} Testing task", task1, task2, idx, "/", len(task_pairs))

@@ -18,7 +18,6 @@ tasks = [
     'edge_texture',
     'keypoints2d',
     'keypoints3d',
-    'curvature',
     'reshading',
     'normal',
     'autoencoding',

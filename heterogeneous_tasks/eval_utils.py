@@ -487,30 +487,6 @@ class TaskonomyDataset(Dataset):
         return len(self.images)
 
 
-class RepairedCacheDataset(Dataset):
-
-    def __init__(self, raw_ds, cache_root="data/repaired") -> None:
-        super().__init__()
-        self.ds = raw_ds
-        self.cache_root = cache_root
-        os.makedirs(cache_root, exist_ok=True)
-        self.cache_files = [
-            os.path.join(cache_root, f"s{i}.pth") for i in range(len(raw_ds))
-        ]
-
-    def __len__(self):
-        return len(self.ds)
-
-    def __getitem__(self, index):
-        path = self.cache_files[index]
-        try:
-            return torch.load(path), []
-        except Exception:
-            img, _ = self.ds[index]
-            torch.save(img, path)
-            return img, []
-
-
 def gather_nd(params, indices):
 
     out_shape = indices.shape[:-1]

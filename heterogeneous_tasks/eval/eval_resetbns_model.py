@@ -6,7 +6,7 @@ from visualpriors import visualpriors
 from copy import deepcopy
 import pickle as pkl
 
-result_dir = "results/resetbn"
+result_dir = "results/resetbns"
 batch_size = 100
 tasks = [
     'class_object',

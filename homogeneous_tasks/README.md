@@ -31,7 +31,7 @@ python -m base_model_concept_merging --config-name=cifar50_resnet20
 - Evaluating the merging method
 
 ```shell
-python -m mudsc_concept_merging.py --config-name=cifar50_resnet20 --suffix=$SUFFIX
+python -m mudsc_concept_merging --config-name=cifar50_resnet20 --suffix=$SUFFIX
 ```
 
 - Note that `$SUFFIX` can be:

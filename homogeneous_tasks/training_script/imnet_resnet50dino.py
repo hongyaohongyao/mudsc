@@ -10,7 +10,7 @@ import numpy as np
 
 from utils import *
 from sklearn.model_selection import train_test_split
-from models.vits import vit_s_timm
+from models.resnets import resnet26timm
 import torch
 import torchvision
 import torchvision.transforms as T
@@ -45,20 +45,20 @@ if __name__ == "__main__":
     data_dir = './data'
     wrapper = torchvision.datasets.CIFAR100
     num_classes = 100  # num classes in dataset
-    batch_size = 100  # batch size
+    batch_size = 500  # batch size
     epochs = 100  # train epochs
 
-    model_dir = os.path.join(model_dir, f'vits', 'pairsplits')
+    model_dir = os.path.join(model_dir, f'resnet26timm', 'pairsplits')
     print(model_dir)
     os.makedirs(model_dir, exist_ok=True)
 
     train_transform = T.Compose([
         T.RandomCrop(32, padding=4),
-        T.Resize(384),
+        T.Resize(224),
         T.RandomHorizontalFlip(),
         T.ToTensor(), normalize
     ])
-    test_transform = T.Compose([T.Resize(384), T.ToTensor(), normalize])
+    test_transform = T.Compose([T.Resize(224), T.ToTensor(), normalize])
     train_dset = wrapper(root=data_dir,
                          train=True,
                          download=True,
@@ -116,7 +116,7 @@ if __name__ == "__main__":
         print(f"{split1}, {split2}")
         for j in range(models_per_run):
             for i in range(len(splits)):
-                model = vit_s_timm(num_classes=out_dim).cuda().train()
+                model = resnet26timm(num_classes=out_dim).cuda().train()
 
                 if 'clip' in model_dir:
                     class_vectors = [clip_features[split] for split in splits]
@@ -127,14 +127,14 @@ if __name__ == "__main__":
                         class_vectors=class_vectors[i],
                         remap_class_idxs=label_remapping,
                         epochs=epochs,
-                        lr=1e-4)
+                        lr=1e-3)
                 else:
                     model, final_acc = train_logits(
                         model=model,
                         train_loader=split_trainers[i],
                         test_loader=split_testers[i],
                         epochs=epochs,
-                        lr=1e-4)
+                        lr=1e-3)
 
                 print(f'Base model on {splits[i]} Acc: {final_acc}')
                 print('Saving Base Model')
@@ -143,7 +143,7 @@ if __name__ == "__main__":
                 os.makedirs(save_dir, exist_ok=True)
                 save_path = os.path.join(
                     save_dir,
-                    f'vits_v{len(os.listdir(save_dir))}.pth.tar')
+                    f'resnet26timm_v{len(os.listdir(save_dir))}.pth.tar')
                 save_model(model, save_path)
 
     print('Done!')

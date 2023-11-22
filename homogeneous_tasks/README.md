@@ -20,8 +20,6 @@ cd ./homogeneous_tasks
 python -m training_script.cifar_resnet20
 ```
 
-- Noted that we train imagenet models with this [repository](https://github.com/libffcv/ffcv-imagenet).
-
 **Evaluating merging methods**  
 
 - Evaluating the basic performance (i.e. the original models, ensemble of the original models)

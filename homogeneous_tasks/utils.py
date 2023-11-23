@@ -240,8 +240,8 @@ def evaluate_cliphead_alltasks(model, loader, label_encodings_list, splits,
             task_preds = all_logits[range(batch_size), task_idx, :].argmax(-1)
             task_preds = task_splits.gather(dim=-1,
                                             index=task_preds[:, None])[:, 0]
-            all_preds = all_logits.flatten(1)[:,
-                                              all_splits.argsort()].argmax(-1)
+            all_preds = all_logits.flatten(1).argmax(-1)
+            all_preds = all_splits.gather(dim=0, index=all_preds)
             
             for gt, task_p, all_p in zip(labels, task_preds, all_preds):
                 totals[gt] += 1
@@ -1164,9 +1164,12 @@ def read_yaml(path):
 
 def inject_pair(config, pair, ignore_bases=False):
     model_name = config['model']['name']
-    config['dataset']['class_splits'] = [
-        split_str_to_ints(split) for split in pair
-    ]
+    if "imnet" in config['dataset']["name"]:
+        config['dataset']['class_splits'] = pair
+    else:
+        config['dataset']['class_splits'] = [
+            split_str_to_ints(split) for split in pair
+        ]
     if not ignore_bases:
         config['model']['bases'] = [
             os.path.join(config['model']['dir'], split,

@@ -1,6 +1,19 @@
 import os
 
-os.environ['CUDA_VISIBLE_DEVICES'] = "1"
+
+import argparse
+
+parser = argparse.ArgumentParser('Training CIFAR')
+
+parser.add_argument('--lr', default=0.4, type=float,
+                        help='config name')
+
+parser.add_argument('--gpu', default='0',type=str,
+                        help='gpu')
+
+args = parser.parse_args()
+
+os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
 import clip
 import torch
@@ -23,7 +36,15 @@ CIFAR_STD = [51.5865, 50.847, 51.255]
 normalize = T.Normalize(np.array(CIFAR_MEAN)/255, np.array(CIFAR_STD)/255)
 denormalize = T.Normalize(-np.array(CIFAR_MEAN)/np.array(CIFAR_STD), 255/np.array(CIFAR_STD))
 
+def reset_random(seed=0):
+    torch.manual_seed(seed)
+    random.seed(seed)
+    np.random.seed(seed)
+    cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
 
+
+reset_random(seed=0)
 
 if __name__ == "__main__":
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -90,12 +111,12 @@ if __name__ == "__main__":
                     class_vectors = [clip_features[split] for split in splits]
                     model, final_acc = train_cliphead(
                         model=model, train_loader=split_trainers[i], test_loader=split_testers[i], 
-                        class_vectors=class_vectors[i], remap_class_idxs=label_remapping, epochs=epochs
+                        class_vectors=class_vectors[i], remap_class_idxs=label_remapping, lr=args.lr, epochs=epochs
                     )
                 else:
                     model, final_acc = train_logits(
                         model=model, train_loader=split_trainers[i], 
-                        test_loader=split_testers[i], epochs=epochs
+                        test_loader=split_testers[i], lr=args.lr, epochs=epochs
                         )
                 
                 print(f'Base model on {splits[i]} Acc: {final_acc}')

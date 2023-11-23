@@ -1,6 +1,18 @@
 import os
 
-os.environ['CUDA_VISIBLE_DEVICES'] = "1"
+import argparse
+
+parser = argparse.ArgumentParser('Training CIFAR')
+
+parser.add_argument('--lr', default=0.1, type=float,
+                        help='config name')
+
+parser.add_argument('--gpu', default='0',type=str,
+                        help='gpu')
+
+args = parser.parse_args()
+
+os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
 
 import clip
 import torch
@@ -128,14 +140,14 @@ if __name__ == "__main__":
                         class_vectors=class_vectors[i],
                         remap_class_idxs=label_remapping,
                         epochs=epochs,
-                        lr=0.1)
+                        lr=args.lr)
                 else:
                     model, final_acc = train_logits(
                         model=model,
                         train_loader=split_trainers[i],
                         test_loader=split_testers[i],
                         epochs=epochs,
-                        lr=0.1)
+                        lr=args.lr)
 
                 print(f'Base model on {splits[i]} Acc: {final_acc}')
                 print('Saving Base Model')

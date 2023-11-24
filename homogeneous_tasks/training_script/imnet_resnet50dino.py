@@ -48,10 +48,6 @@ if __name__ == "__main__":
     use_clip = True
     model_dir = f'./checkpoints/imnet_{"clip" if use_clip else "logits"}'
 
-    
-
-    
-
     models_per_run = 1  # num models to train per split
     data_dir = "./datasets/ILSVRC2012/"
     wrapper = torchvision.datasets.ImageNet
@@ -60,7 +56,7 @@ if __name__ == "__main__":
     epochs = 50  # train epochs
 
     model_dir = os.path.join(model_dir, f'resnet50dino', 'pairsplits')
-    
+
     total_cat = torch.randperm(1000)
     task_split_dict = {k:total_cat[k*200:(k+1)*200] for k in range(5)}
     with open(os.path.join(model_dir,"task_split.pkl"),"wb") as f:

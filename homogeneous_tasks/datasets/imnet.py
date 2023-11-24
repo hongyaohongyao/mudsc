@@ -71,11 +71,11 @@ def prepare_train_loaders(config):
                    batch_size=config['batch_size'],
                    shuffle=config['shuffle_train'],
                    num_workers=config['num_workers']),
-        # 'reset':
-        # DataLoader(Subset(train_dset, indices_reset),
-        #            batch_size=config['batch_size'],
-        #            shuffle=config['shuffle_train'],
-        #            num_workers=config['num_workers'])
+        'reset':
+        DataLoader(Subset(train_dset, indices_reset),
+                   batch_size=config['batch_size'],
+                   shuffle=config['shuffle_train'],
+                   num_workers=config['num_workers'])
     }
 
     if 'class_splits' in config:

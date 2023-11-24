@@ -55,7 +55,7 @@ if __name__ == "__main__":
     wrapper = torchvision.datasets.ImageNet
     num_classes = 1000  # num classes in dataset
     batch_size = 200  # batch size
-    epochs = 100  # train epochs
+    epochs = 50  # train epochs
 
     model_dir = os.path.join(model_dir, f'resnet50dino', 'pairsplits')
     print(model_dir)

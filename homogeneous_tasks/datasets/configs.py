@@ -39,7 +39,7 @@ imnet = {
     'shuffle_train': True,
     'shuffle_test': False,
     'num_workers': 8,
-    "reset_sample":240000,
+    "reset_sample":60000,
     "train_sample":60000,
 }
 

@@ -132,6 +132,14 @@ def prepare_test_loaders(config):
         i for i, label in tqdm(enumerate(train_dset_raw.targets))
         if label in all_split
     ])
+    if "train_for_test_sample" in config:
+        generator = torch.Generator()
+        generator.manual_seed(0)
+        indices = torch.randperm(len(train_dset),
+                                generator=generator)
+        indices_sample = indices[:config["train_for_test_sample"]]
+        train_dset = Subset(train_dset, indices_sample)
+
     loaders = {
         'full':
         DataLoader(test_dset,

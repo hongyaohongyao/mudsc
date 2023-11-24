@@ -41,6 +41,7 @@ imnet = {
     'num_workers': 8,
     "reset_sample":60000,
     "train_sample":60000,
+    "train_for_test_sample": 120000,
 }
 
 cifar50_224 = {

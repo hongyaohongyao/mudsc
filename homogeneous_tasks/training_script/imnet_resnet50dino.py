@@ -44,11 +44,13 @@ reset_random(seed=0)
 
 if __name__ == "__main__":
 
-    task_split_dict = {k:list(range(k*200,(k+1)*200)) for k in range(5)}
-
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     use_clip = True
     model_dir = f'./checkpoints/imnet_{"clip" if use_clip else "logits"}'
+
+    
+
+    
 
     models_per_run = 1  # num models to train per split
     data_dir = "./datasets/ILSVRC2012/"
@@ -58,6 +60,11 @@ if __name__ == "__main__":
     epochs = 50  # train epochs
 
     model_dir = os.path.join(model_dir, f'resnet50dino', 'pairsplits')
+    
+    total_cat = torch.randperm(1000)
+    task_split_dict = {k:total_cat[k*200:(k+1)*200] for k in range(5)}
+    with open(os.path.join(model_dir,"task_split.pkl"),"wb") as f:
+        pkl.dump(task_split_dict)
     print(model_dir)
     os.makedirs(model_dir, exist_ok=True)
 
@@ -95,12 +102,11 @@ if __name__ == "__main__":
         out_dim = num_classes
     for task,splits in task_split_dict.items():
 
-
-        with open("imnet_idx.pkl","rb") as f:
-            split_idx_dict = pkl.load(f)
-
         split_trainers = torch.utils.data.DataLoader(torch.utils.data.Subset(
-                train_dset, split_idx_dict[task]),
+                train_dset, [
+                    i for i, label in enumerate(train_dset.targets)
+                    if label in splits
+                ]),
                                         batch_size=batch_size,
                                         shuffle=True,
                                         num_workers=8)

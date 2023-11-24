@@ -19,14 +19,12 @@ ssl._create_default_https_context = ssl._create_unverified_context
 from torch.utils.data import DataLoader, Subset
 import torch
 
-task_split_dict = {k: list(range(k * 200, (k + 1) * 200)) for k in range(5)}
-
 
 def prepare_train_loaders(config):
 
     # return None
-    with open("imnet_idx.pkl", "rb") as f:
-        split_idxs = pkl.load(f)
+    with open("task_split.pkl", "rb") as f:
+        task_split_dict = pkl.load(f)
 
     img_size = 224
 
@@ -51,8 +49,11 @@ def prepare_train_loaders(config):
     
     split_pair = config['class_splits']
     print("split pair", split_pair)
-    train_dset = Subset(train_dset_raw,
-                        split_idxs[split_pair[0]] + split_idxs[split_pair[1]])
+    all_split = task_split_dict[split_pair[0]] + task_split_dict[split_pair[1]]
+    train_dset = Subset(train_dset_raw,[
+        i for i, label in tqdm(enumerate(train_dset_raw.targets))
+        if label in all_split
+    ])
     
     generator = torch.Generator()
     generator.manual_seed(0)
@@ -82,14 +83,18 @@ def prepare_train_loaders(config):
         loaders['splits'] = []
         grouped_class_indices = np.zeros(config['num_classes'], dtype=int)
         for i, splits in enumerate(config['class_splits']):
-            valid_examples = split_idxs[splits]
+            splits_ = task_split_dict[splits]
+            valid_examples = [
+                i for i, label in tqdm(enumerate(train_dset_raw.targets))
+                if label in splits_
+            ]
             data_subset = Subset(train_dset_raw, valid_examples)
             loaders['splits'].append(
                 DataLoader(data_subset,
                            batch_size=config['batch_size'],
                            shuffle=config['shuffle_train'],
                            num_workers=config['num_workers']))
-            splits_ = task_split_dict[splits]
+            
             grouped_class_indices[splits_] = np.arange(len(splits_))
 
         loaders["label_remapping"] = torch.from_numpy(grouped_class_indices)
@@ -99,8 +104,10 @@ def prepare_train_loaders(config):
 
 
 def prepare_test_loaders(config):
-    with open("imnet_idx.pkl", "rb") as f:
-        split_idxs = pkl.load(f)
+    
+    with open("task_split.pkl", "rb") as f:
+        task_split_dict = pkl.load(f)
+    
     img_size = 224
     test_transform = T.Compose([
         T.Resize(int(img_size * 1.143)),
@@ -121,8 +128,10 @@ def prepare_test_loaders(config):
         i for i, label in tqdm(enumerate(test_dset_raw.targets))
         if label in all_split
     ])
-    train_dset = Subset(train_dset_raw,
-                        split_idxs[split_pair[0]] + split_idxs[split_pair[1]])
+    train_dset = Subset(train_dset_raw,[
+        i for i, label in tqdm(enumerate(train_dset_raw.targets))
+        if label in all_split
+    ])
     loaders = {
         'full':
         DataLoader(test_dset,

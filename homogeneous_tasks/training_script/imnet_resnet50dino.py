@@ -57,12 +57,13 @@ if __name__ == "__main__":
 
     model_dir = os.path.join(model_dir, f'resnet50dino', 'pairsplits')
 
+    print(model_dir)
+    os.makedirs(model_dir, exist_ok=True)
+
     total_cat = torch.randperm(1000)
     task_split_dict = {k:total_cat[k*200:(k+1)*200].tolist() for k in range(5)}
     with open(os.path.join(model_dir,"task_split.pkl"),"wb") as f:
         pkl.dump(task_split_dict, f)
-    print(model_dir)
-    os.makedirs(model_dir, exist_ok=True)
 
     img_size = 224
     train_transform= T.Compose([

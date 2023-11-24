@@ -133,6 +133,7 @@ def prepare_test_loaders(config):
         if label in all_split
     ])
     if "train_for_test_sample" in config:
+        print(f"sample train data for test", config["train_for_test_sample"])
         generator = torch.Generator()
         generator.manual_seed(0)
         indices = torch.randperm(len(train_dset),

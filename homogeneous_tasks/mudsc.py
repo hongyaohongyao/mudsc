@@ -40,6 +40,90 @@ RESHAPE_FUNC = {
     "group_conv": gen_reshape_group_conv
 }
 
+def get_swin_perm(depths=[2,2,6,2], num_heads=[ 3, 6, 12, 24 ],ignore_head=False):
+    vit_perm = {}
+    cur_perm = 0
+    # vit_perm[cur_perm] = [
+    #     [0, "patch_embed.proj.weight"],
+    #     [0, "patch_embed.proj.bias"],
+    #     [0, "patch_embed.norm.weight"],
+    #     [0, "patch_embed.norm.bias"],
+    # ]
+    for d,(depth, nh) in enumerate(zip(depths,num_heads)):
+        
+        for i in range(depth):
+            if d == len(depths)-1:
+                vit_perm[hold_perm].extend([
+                    [0, f"layers.{d}.blocks.{i}.norm1.weight"],
+                    [0, f"layers.{d}.blocks.{i}.norm1.bias"],
+                    [0, f"layers.{d}.blocks.{i}.norm1.bias"],
+                    [1, f"layers.{d}.blocks.{i}.attn.qkv.weight_q", LINEAR_IN_CFG],
+                    [1, f"layers.{d}.blocks.{i}.attn.qkv.weight_k", LINEAR_IN_CFG],
+                    [1, f"layers.{d}.blocks.{i}.attn.qkv.weight_v", LINEAR_IN_CFG],
+                    # first res
+                    [0, f"layers.{d}.blocks.{i}.attn.proj.weight"],
+                    [0, f"layers.{d}.blocks.{i}.attn.proj.bias"],
+                    [0, f"layers.{d}.blocks.{i}.norm2.weight"],
+                    [0, f"layers.{d}.blocks.{i}.norm2.bias"],
+                    #second res
+                    [1, f"layers.{d}.blocks.{i}.mlp.fc1.weight", LINEAR_IN_CFG],
+                    [0, f"layers.{d}.blocks.{i}.mlp.fc2.weight"],
+                    [0, f"layers.{d}.blocks.{i}.mlp.fc2.bias"],
+                ])
+            vit_perm[cur_perm] = [
+                [
+                    0, f"layers.{d}.blocks.{i}.attn.qkv.weight_q", {
+                        **group_cfg(nh),
+                        **split_dim_cfg(0, f"layers.{d}.blocks.{i}.attn.qkv.weight", [
+                            "q", "k", "v"
+                        ]),
+                        **act_module_cfg(f"layers.{d}.blocks.{i}.attn.q_norm",
+                                        reshape_func=("norm_qk", {}),
+                                        hook="post")
+                    }
+                ],
+                [
+                    0, f"layers.{d}.blocks.{i}.attn.qkv.bias_q",
+                    split_dim_cfg(0, f"layers.{d}.blocks.{i}.attn.qkv.bias", ["q", "k", "v"])
+                ],
+                [
+                    0, f"layers.{d}.blocks.{i}.attn.qkv.weight_k",
+                    act_module_cfg(f"layers.{d}.blocks.{i}.attn.k_norm",
+                                reshape_func=("norm_qk", {}),
+                                hook="post")
+                ],
+                [0, f"layers.{d}.blocks.{i}.attn.qkv.bias_k"],
+            ]
+
+            cur_perm += 1
+            vit_perm[cur_perm] = [
+                [0, f"layers.{d}.blocks.{i}.attn.qkv.weight_v",
+                group_cfg(nh)],
+                [0, f"layers.{d}.blocks.{i}.attn.qkv.bias_v"],
+                [1, f"layers.{d}.blocks.{i}.attn.proj.weight", LINEAR_IN_CFG],
+            ]
+
+            cur_perm += 1
+            vit_perm[cur_perm] = [[0, f"layers.{d}.blocks.{i}.mlp.fc1.weight"],
+                                [0, f"layers.{d}.blocks.{i}.mlp.fc1.bias"],
+                                [1, f"layers.{d}.blocks.{i}.mlp.fc2.weight", LINEAR_IN_CFG]]
+            cur_perm += 1
+        if d == len(depths)-2:
+            hold_perm = cur_perm
+            cur_perm += 1
+            vit_perm[hold_perm] = [
+                [0, f"layers.{d}.downsample.reduction.weight"]
+            ]
+
+    head_cfg = IN_CFG
+    if ignore_head:
+        head_cfg = {**head_cfg,**IGNORE_CFG}
+    vit_perm[hold_perm].extend([
+        [0, "norm.weight"],
+        [0, "norm.bias"],
+        [1, "head.weight", head_cfg],
+    ])
+    return vit_perm
 
 def group_cfg(group, same_members=False):
     return {"group": {"num": group, "same": same_members}}
